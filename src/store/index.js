@@ -10,12 +10,16 @@ export const store = new Vuex.Store({
         imageUrl: 'https://i.pinimg.com/originals/a2/50/03/a25003d26a35ace681cf28fd3e57613d.jpg',
         id: 'asdfasdf123',
         title: 'Meetup in Istanbul',
-        date: '2017-07-17'
+        date: '2017-07-17',
+        location: 'Istanbul',
+        description: 'Istanbul, Europe'
       }, {
         imageUrl: 'https://c1.staticflickr.com/3/2463/3598596311_84211f2566_b.jpg',
         id: 'asdfasdf123123',
         title: 'Meetup in Paris',
-        date: '2017-07-18'
+        date: '2017-07-18',
+        location: 'Paris',
+        description: 'Paris, West'
       }
     ],
     user: {
