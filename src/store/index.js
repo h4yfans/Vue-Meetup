@@ -28,6 +28,9 @@ export const store = new Vuex.Store({
     error: null
   },
   mutations: {
+    setLoadedMeetups (state, payload) {
+      state.loadedMeetups = payload
+    },
     createMeetup (state, payload) {
       state.loadedMeetups.push(payload)
     },
@@ -45,6 +48,30 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+    loadMeetups ({commit}) {
+      commit('setLoading', true)
+      firebase.database().ref('meetups').once('value')
+        .then((data) => {
+          const meetups = []
+          const obj = data.val()
+          for (let key in obj) {
+            meetups.push({
+              id: key,
+              title: obj[key].title,
+              description: obj[key].description,
+              imageUrl: obj[key].imageUrl,
+              date: obj[key].date,
+              creatorId: obj[key].creatorId
+            })
+          }
+          commit('setLoadedMeetups', meetups)
+          commit('setLoading', false)
+        })
+        .catch((error) => {
+          console.log(error)
+          commit('setLoading', true)
+        })
+    },
     createMeetup ({commit}, payload) {
       // payload'da var olan fakat kullanmak istemeyeceğimiz propertyler olduğunu düşündüğümüz için farklı bir nesne oluşturuyoruz
       const meetup = {
@@ -52,11 +79,20 @@ export const store = new Vuex.Store({
         location: payload.location,
         imageUrl: payload.imageUrl,
         description: payload.description,
-        date: payload.date,
-        id: 'sadfsadf'
+        date: payload.date.toISOString()
       }
+      firebase.database().ref('meetups').push(meetup)
+        .then((data) => {
+          const key = data.key
+          commit('createMeetup', {
+            ...meetup,
+            id: key
+          })
+        })
+        .catch((error) => {
+          console.log(error)
+        })
       // Reach out to firebase and store it
-      commit('createMeetup', meetup)
     },
     signUserUp ({commit}, payload) { // Signup.vue içerisindeki dispatch'i referans alır
       commit('setLoading', true)
